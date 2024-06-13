@@ -1,0 +1,24 @@
+# environment
+.env
+.venv
+env/
+venv/
+#vscode
+.vscode
+# mypy
+.mypy_cache/
+.dmypy.json
+
+#python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+#python build
+build/
+*.egg-info/
+*.egg
+eggs/
+.eggs/
+
+.DS_Store
