@@ -11,12 +11,24 @@ from functools import partial
 
 import matplotlib.pyplot as plt
 import numpy as np
-from tensorflow.keras.layers import Conv3D, LeakyReLU, Input, MaxPooling3D, UpSampling3D, concatenate, \
-    BatchNormalization
+from tensorflow.keras.layers import (
+    BatchNormalization,
+    Conv3D,
+    Input,
+    LeakyReLU,
+    MaxPooling3D,
+    UpSampling3D,
+    concatenate,
+)
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-from CellTracker.preprocess import load_image, _make_folder, _normalize_image, _normalize_label
+from CellTracker.preprocess import (
+    _make_folder,
+    _normalize_image,
+    _normalize_label,
+    load_image,
+)
 
 warnings.filterwarnings('ignore')
 

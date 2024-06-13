@@ -22,21 +22,28 @@ import matplotlib as mpl
 import matplotlib.image as mgimg
 import numpy as np
 import scipy.ndimage.measurements as ndm
-from PIL import Image
-from numpy import ndarray
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from matplotlib import animation
 from matplotlib import pyplot as plt
+from numpy import ndarray
+from PIL import Image
 from scipy.stats import trim_mean
 from skimage.measure import label
-from skimage.segmentation import relabel_sequential, find_boundaries
+from skimage.segmentation import find_boundaries, relabel_sequential
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from .preprocess import _make_folder, _normalize_image, _normalize_label, load_image
-from .track import pr_gls_quick, initial_matching_quick, get_reference_vols, get_subregions, tracking_plot_xy, \
-    tracking_plot_zx, gaussian_filter
-from .unet3d import unet3_prediction, _divide_img, _augmentation_generator
-from .watershed import watershed_2d, watershed_3d, recalculate_cell_boundaries
+from .track import (
+    gaussian_filter,
+    get_reference_vols,
+    get_subregions,
+    initial_matching_quick,
+    pr_gls_quick,
+    tracking_plot_xy,
+    tracking_plot_zx,
+)
+from .unet3d import _augmentation_generator, _divide_img, unet3_prediction
+from .watershed import recalculate_cell_boundaries, watershed_2d, watershed_3d
 
 mpl.rcParams['image.interpolation'] = 'none'
 
@@ -260,7 +267,7 @@ class Draw:
         axm[0].set_title(f"Cell regions at vol {self.vol} by U-Net", fontdict=TITLE_STYLE)
         axm[1].imshow(np.max(self.seg_cells_interpolated_corrected, axis=2),
                       cmap=get_random_cmap(num=self.cell_num_t0))
-        axm[1].set_title(f"Manual _segment at vol 1", fontdict=TITLE_STYLE)
+        axm[1].set_title("Manual _segment at vol 1", fontdict=TITLE_STYLE)
 
     def _draw_transformation(self, ax, r_coordinates_predicted_pre, r_coordinates_segmented_post,
                              r_coordinates_predicted_post, layercoord, draw_point=True):
@@ -369,7 +376,7 @@ class Draw:
                    cmap=get_random_cmap(num=self.cell_num_t0), aspect=self.z_xy_ratio, alpha=ALPHA_BLEND)
         ax1.set_title(f"Before matching: Cells at vol {volume2} + Labels at vol {self.vol} (y-x plane)",
                       fontdict=TITLE_STYLE)
-        ax2.set_title(f"Before matching (y-z plane)",
+        ax2.set_title("Before matching (y-z plane)",
                       fontdict=TITLE_STYLE)
 
     def _draw_after_matching(self, ax1, ax2, volume2, legend=True):
@@ -385,7 +392,7 @@ class Draw:
         if legend:
             ax1.set_title(f"After matching: Cells at vol {volume2} + Labels at vol {volume2} (y-x plane)",
                           fontdict=TITLE_STYLE)
-            ax2.set_title(f"After matching (y-z plane)",
+            ax2.set_title("After matching (y-z plane)",
                           fontdict=TITLE_STYLE)
         return None
 
@@ -543,11 +550,11 @@ class Segmentation:
             print(f"Parameters were modified: noise_level={self.noise_level}, min_size={self.min_size}")
             for f in os.listdir(self.paths.unet_cache):
                 os.remove(os.path.join(self.paths.unet_cache, f))
-            print(f"All files under /unet folder were deleted")
+            print("All files under /unet folder were deleted")
         if del_cache:
             for f in os.listdir(self.paths.unet_cache):
                 os.remove(os.path.join(self.paths.unet_cache, f))
-            print(f"All files under /unet folder were deleted")
+            print("All files under /unet folder were deleted")
 
     @staticmethod
     def _transform_disps(disp, factor):
@@ -600,7 +607,7 @@ class Segmentation:
         # save the segmented cells of volume #1
         save_automatic_segmentation(labels_xyz=self.segresult.segmentation_auto,
                                     folder_path=self.paths.folder, use_8_bit=use_8_bit)
-        print(f"Segmented volume 1 and saved it")
+        print("Segmented volume 1 and saved it")
 
     def _segment(self, vol, method, print_shape=False):
         """

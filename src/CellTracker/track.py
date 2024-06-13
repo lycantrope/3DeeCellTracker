@@ -66,8 +66,8 @@ def pr_gls_quick(X, Y, corr, BETA=300, max_iteration=20, LAMBDA=0.1, vol=1E8):
         cc_max_idx = np.unravel_index(cc_ref_tgt_temp.argmax(), cc_ref_tgt_temp.shape)
         init_match[cc_max_idx[0], :] = 0.1 / (length_X - 1)
         init_match[cc_max_idx[0], cc_max_idx[1]] = 0.9
-        cc_ref_tgt_temp[cc_max_idx[0], :] = 0;
-        cc_ref_tgt_temp[:, cc_max_idx[1]] = 0;
+        cc_ref_tgt_temp[cc_max_idx[0], :] = 0
+        cc_ref_tgt_temp[:, cc_max_idx[1]] = 0
 
     # initiate T_X, which equals to X+v(X).
     T_X = X.copy()
@@ -219,8 +219,8 @@ def pr_gls(X,Y,corr,BETA=300, max_iteration=20, LAMBDA=0.1,vol=1E8):
         cc_max_idx=np.unravel_index(cc_ref_tgt_temp.argmax(),cc_ref_tgt_temp.shape)
         init_match[cc_max_idx[0],:]=0.1/(length_X-1)    
         init_match[cc_max_idx[0],cc_max_idx[1]]=0.9
-        cc_ref_tgt_temp[cc_max_idx[0],:]=0;
-        cc_ref_tgt_temp[:,cc_max_idx[1]]=0;
+        cc_ref_tgt_temp[cc_max_idx[0],:]=0
+        cc_ref_tgt_temp[:,cc_max_idx[1]]=0
     
     # initiate T_X, which equals to X+v(X).
     T_X=X.copy()
@@ -384,7 +384,7 @@ def transform_cells(img3d, vectors3d):
     mask = np.zeros((shape),dtype=np.dtype(img3d[0,0,0]))
     for label in range(1, img3d.max()+1):
 
-        v1 = vectors3d[label-1,0]; v2 = vectors3d[label-1,1]; v3 = vectors3d[label-1,2]; 
+        v1 = vectors3d[label-1,0]; v2 = vectors3d[label-1,1]; v3 = vectors3d[label-1,2] 
         
         if v1>=0:
             idx_1_start=0;idx_1_end=shape[0]-v1

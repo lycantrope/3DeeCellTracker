@@ -1,0 +1,31 @@
+[project]
+name = "3DeeCellTracker"
+version = "1.0.0"
+description = "A package for tracking cells in 3D time lapse images in deforming organs or moving animals"
+authors = [{ name = "Chentao Wen", email = "chintou.on@gmail.com" }]
+urls = { github = "https://github.com/WenChentao/3DeeCellTracker" }
+classifiers = [
+    "Programming Language :: Python",
+    "Environment :: GPU :: NVIDIA CUDA",
+]
+dependencies = ["stardist>=0.9.1", "numpy>=1.26.4", "scikit-learn>=1.5.0"]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/CellTracker"]
+
+
+[tool.ruff.lint]
+extend-select = ["I"]

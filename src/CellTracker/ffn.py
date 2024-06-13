@@ -1,6 +1,6 @@
 from glob import glob
 from pathlib import Path
-from typing import Tuple, Generator, Union
+from typing import Generator, Tuple, Union
 
 import numpy as np
 import tensorflow as tf
@@ -8,7 +8,7 @@ from numpy import ndarray
 from sklearn.decomposition import PCA
 from sklearn.neighbors import NearestNeighbors
 from tensorflow.keras import Model
-from tensorflow.keras.layers import Dense, BatchNormalization, LeakyReLU, Concatenate
+from tensorflow.keras.layers import BatchNormalization, Concatenate, Dense, LeakyReLU
 from tifffile import imread
 from tqdm import tqdm
 

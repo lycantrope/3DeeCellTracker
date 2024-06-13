@@ -4,8 +4,6 @@ Author: Chentao Wen
 Modification Description: This module is a wrapper of 3D StarDist modified according to 2_training.ipynb in GitHub StarDist repository
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division, annotations
-
 import os
 import re
 import sys
@@ -15,11 +13,16 @@ from typing import List
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
 from csbdeep.utils import Path, normalize
 from numpy import ndarray
-from stardist import Rays_GoldenSpiral
-from stardist import fill_label_holes, random_label_cmap, calculate_extents, gputools_available
+from PIL import Image
+from stardist import (
+    Rays_GoldenSpiral,
+    calculate_extents,
+    fill_label_holes,
+    gputools_available,
+    random_label_cmap,
+)
 from stardist.models import Config3D
 from stardist.utils import _normalize_grid
 from tifffile import imread
@@ -51,20 +54,29 @@ def load_2d_slices_at_time(images_path: str | dict, t: int, do_normalize: bool =
     """Load all 2D slices at time t and normalize the resulted 3D image"""
     if isinstance(images_path, str):
         file_extension = os.path.splitext(images_path)[1]
-        assert file_extension in [".tif", ".tiff"], "Currently only TIFF sequences or HDF5 dataset are supported"
+        assert file_extension in [
+            ".tif",
+            ".tiff",
+        ], "Currently only TIFF sequences or HDF5 dataset are supported"
         slice_paths_at_t = sorted(glob(images_path % t))
         if len(slice_paths_at_t) == 0:
             raise FileNotFoundError(f"No image at time {t} was found")
         x = imread_pillow(slice_paths_at_t)
     elif isinstance(images_path, dict):
         file_extension = os.path.splitext(images_path["h5_file"])[1]
-        assert file_extension in [".h5", ".hdf5"], "Currently only TIFF sequences or HDF5 dataset are supported"
+        assert file_extension in [
+            ".h5",
+            ".hdf5",
+        ], "Currently only TIFF sequences or HDF5 dataset are supported"
 
         import h5py
-        with h5py.File(images_path["h5_file"], 'r') as f:
+
+        with h5py.File(images_path["h5_file"], "r") as f:
             x = f["default"][t - 1, images_path["channel"], :, :, :]
     else:
-        raise ValueError("image_paths should be a str for TIFF sequences or dict for HDF5 dataset")
+        raise ValueError(
+            "image_paths should be a str for TIFF sequences or dict for HDF5 dataset"
+        )
 
     if do_normalize:
         axis_norm = (0, 1, 2)  # normalize channels independently
@@ -90,14 +102,18 @@ def predict_and_save(images_path: str, model: StarDist3DCustom, results_folder: 
     largest_number, smallest_number = get_t_range(images_path)
 
     # Process images and predict instance coordinates
-    with tqdm(total=largest_number - smallest_number + 1, desc="Segmenting images", ncols=50) as pbar:
+    with tqdm(
+        total=largest_number - smallest_number + 1, desc="Segmenting images", ncols=50
+    ) as pbar:
         for t in range(smallest_number, largest_number + 1):
             try:
                 # Load 2D slices at time t
                 x = load_2d_slices_at_time(images_path, t=t)
             except FileNotFoundError:
                 # Handle missing image files
-                print(f"Warning: Segmentation has been stopped since images at t={t - 1} cannot be loaded!")
+                print(
+                    f"Warning: Segmentation has been stopped since images at t={t - 1} cannot be loaded!"
+                )
                 break
             (labels, details), prob_map = model.predict_instances(x)
             # Save predicted instance coordinates as numpy arrays
@@ -108,18 +124,25 @@ def predict_and_save(images_path: str, model: StarDist3DCustom, results_folder: 
             if t == smallest_number:
                 save_auto_seg_vol1(labels.transpose((1, 2, 0)), results_folder)
             pbar.update(1)
-    print(f"All images from t={smallest_number} to t={largest_number} have been Segmented")
+    print(
+        f"All images from t={smallest_number} to t={largest_number} have been Segmented"
+    )
 
 
 def get_t_range(images_path: str | dict):
     if isinstance(images_path, str):
         file_extension = os.path.splitext(images_path)[1]
-        assert file_extension in [".tif", ".tiff"], "Currently only TIFF sequences or HDF5 dataset are supported"
+        assert file_extension in [
+            ".tif",
+            ".tiff",
+        ], "Currently only TIFF sequences or HDF5 dataset are supported"
 
         images_path_search = Path(images_path)
         new_filename = "*t*" + images_path_search.suffix
         filenames = glob(str(images_path_search.parent / new_filename))
-        assert len(filenames) > 0, f"No image files were found in {images_path_search.parent / new_filename}"
+        assert (
+            len(filenames) > 0
+        ), f"No image files were found in {images_path_search.parent / new_filename}"
         numbers = [int(re.findall(r"t(\d+)", f)[0]) for f in filenames]
         smallest_number = min(numbers)
         largest_number = max(numbers)
@@ -127,14 +150,20 @@ def get_t_range(images_path: str | dict):
 
     elif isinstance(images_path, dict):
         file_extension = os.path.splitext(images_path["h5_file"])[1]
-        assert file_extension in [".h5", ".hdf5"], "Currently only TIFF sequences or HDF5 dataset are supported"
+        assert file_extension in [
+            ".h5",
+            ".hdf5",
+        ], "Currently only TIFF sequences or HDF5 dataset are supported"
 
         import h5py
-        with h5py.File(images_path["h5_file"], 'r') as f:
+
+        with h5py.File(images_path["h5_file"], "r") as f:
             t_max = f[images_path["dset"]].shape[0]
         return t_max, 1
     else:
-        raise ValueError("image_paths should be a str for TIFF sequences or dict for HDF5 dataset")
+        raise ValueError(
+            "image_paths should be a str for TIFF sequences or dict for HDF5 dataset"
+        )
 
 
 def save_auto_seg_vol1(labels_xyz, results_folder):
@@ -165,12 +194,16 @@ def save_arrays_to_folder(arrays, folder_path):
         np.save(filepath, arr)
 
 
-def load_training_images(path_train_images: str, path_train_labels: str, max_projection: bool):
+def load_training_images(
+    path_train_images: str, path_train_labels: str, max_projection: bool
+):
     """Load images for training StarDist3DCustom"""
     X = sorted(glob(path_train_images))
     Y = sorted(glob(path_train_labels))
     assert len(X) > 0 and len(Y) > 0, "Error: No images found in either X or Y."
-    assert all(Path(x).name == Path(y).name for x, y in zip(X, Y)), "Error: Filenames in X and Y do not match."
+    assert all(
+        Path(x).name == Path(y).name for x, y in zip(X, Y)
+    ), "Error: Filenames in X and Y do not match."
     X = list(map(imread, X))
     Y = list(map(imread, Y))
     n_channel = 1 if X[0].ndim == 3 else X[0].shape[-1]
@@ -178,14 +211,17 @@ def load_training_images(path_train_images: str, path_train_labels: str, max_pro
     # axis_norm = (0,1,2,3) # normalize channels jointly
     if n_channel > 1:
         print(
-            "Normalizing image channels %s." % ('jointly' if axis_norm is None or 3 in axis_norm else 'independently'))
+            "Normalizing image channels %s."
+            % ("jointly" if axis_norm is None or 3 in axis_norm else "independently")
+        )
         sys.stdout.flush()
 
     X = [normalize(x, 1, 99.8, axis=axis_norm) for x in tqdm(X)]
     Y = [fill_label_holes(y) for y in tqdm(Y)]
     if len(X) == 1:
         print(
-            "Warning: only one training data was provided! It will be used for both training and validation purposes!")
+            "Warning: only one training data was provided! It will be used for both training and validation purposes!"
+        )
         X = [X[0], X[0]]
         Y = [Y[0], Y[0]]
     rng = np.random.RandomState(42)
@@ -194,9 +230,9 @@ def load_training_images(path_train_images: str, path_train_labels: str, max_pro
     ind_train, ind_val = ind[:-n_val], ind[-n_val:]
     X_val, Y_val = [X[i] for i in ind_val], [Y[i] for i in ind_val]
     X_trn, Y_trn = [X[i] for i in ind_train], [Y[i] for i in ind_train]
-    print('number of images: %3d' % len(X))
-    print('- training:       %3d' % len(X_trn))
-    print('- validation:     %3d' % len(X_val))
+    print("number of images: %3d" % len(X))
+    print("- training:       %3d" % len(X_trn))
+    print("- validation:     %3d" % len(X_val))
     print(f"X[0].shape={X[0].shape}")
     i = 0
     img, lbl = X[i], Y[i]
@@ -210,11 +246,16 @@ def load_training_images(path_train_images: str, path_train_labels: str, max_pro
     return X, Y, X_trn, Y_trn, X_val, Y_val, n_channel
 
 
-def configure(Y: List[ndarray], n_channel: int, up_limit: int = UP_LIMIT, model_name: str = 'stardist',
-              basedir: str = STARDIST_MODELS):
+def configure(
+    Y: List[ndarray],
+    n_channel: int,
+    up_limit: int = UP_LIMIT,
+    model_name: str = "stardist",
+    basedir: str = STARDIST_MODELS,
+):
     extents = calculate_extents(Y)
     anisotropy = tuple(np.max(extents) / extents)
-    print('empirical anisotropy of labeled objects = %s' % str(anisotropy))
+    print("empirical anisotropy of labeled objects = %s" % str(anisotropy))
 
     # 96 is a good default choice (see 1_data.ipynb)
     n_rays = 96
@@ -241,7 +282,7 @@ def configure(Y: List[ndarray], n_channel: int, up_limit: int = UP_LIMIT, model_
     unet_n_depth = 2  #
     grid_norm = _normalize_grid(grid, 3)
     unet_pool = 2, 2, 2
-    div_by = tuple(p ** unet_n_depth * g for p, g in zip(unet_pool, grid_norm))
+    div_by = tuple(p**unet_n_depth * g for p, g in zip(unet_pool, grid_norm))
     print(f"div_by={div_by}")
     train_patch_size = [int(d * (i // d)) for i, d in zip(train_patch_size, div_by)]
     # 4. size of x and y should be the same (since augmentation will flip x-y axes)
@@ -264,6 +305,7 @@ def configure(Y: List[ndarray], n_channel: int, up_limit: int = UP_LIMIT, model_
 
     if use_gpu:
         from csbdeep.utils.tf import limit_gpu_memory
+
         # adjust as necessary: limit GPU memory to be used by TensorFlow to leave some to OpenCL-based computations
         limit_gpu_memory(0.8)
         # alternatively, try this:
@@ -272,11 +314,13 @@ def configure(Y: List[ndarray], n_channel: int, up_limit: int = UP_LIMIT, model_
     model = StarDist3DCustom(conf, name=model_name, basedir=basedir)
 
     median_size = calculate_extents(Y, np.median)
-    fov = np.array(model._axes_tile_overlap('ZYX'))
+    fov = np.array(model._axes_tile_overlap("ZYX"))
     print(f"median object size:      {median_size}")
     print(f"network field of view :  {fov}")
     if any(median_size > fov):
-        print("WARNING: median object size larger than field of view of the neural network.")
+        print(
+            "WARNING: median object size larger than field of view of the neural network."
+        )
 
     return model
 
@@ -286,11 +330,15 @@ def print_dict(my_dict: dict):
         print(f"{key}: {value}")
 
 
-def plot_img_label_center_slice(img, lbl, img_title="image (XY slice)", lbl_title="label (XY slice)", z=None):
+def plot_img_label_center_slice(
+    img, lbl, img_title="image (XY slice)", lbl_title="label (XY slice)", z=None
+):
     if z is None:
         z = img.shape[0] // 2
-    fig, (ai, al) = plt.subplots(1, 2, figsize=(15, 7), gridspec_kw=dict(width_ratios=(1.25, 1)))
-    im = ai.imshow(img[z], cmap='gray', clim=(0, 1))
+    fig, (ai, al) = plt.subplots(
+        1, 2, figsize=(15, 7), gridspec_kw=dict(width_ratios=(1.25, 1))
+    )
+    im = ai.imshow(img[z], cmap="gray", clim=(0, 1))
     ai.set_title(img_title)
     fig.colorbar(im, ax=ai)
     al.imshow(lbl[z], cmap=lbl_cmap)
@@ -298,8 +346,14 @@ def plot_img_label_center_slice(img, lbl, img_title="image (XY slice)", lbl_titl
     plt.tight_layout()
 
 
-def plot_img_label_max_projection(img, lbl, img_title="image (max projection/x-y)", lbl_title="label (max projection)",
-                                  fig_width_px=1200, dpi=96):
+def plot_img_label_max_projection(
+    img,
+    lbl,
+    img_title="image (max projection/x-y)",
+    lbl_title="label (max projection)",
+    fig_width_px=1200,
+    dpi=96,
+):
     fig_width_in = fig_width_px / dpi  # convert to inches assuming 96 dpi
     fig_height_in = fig_width_in / 1.618  # set height to golden ratio
     # Create a new figure with the calculated size
@@ -312,9 +366,15 @@ def plot_img_label_max_projection(img, lbl, img_title="image (max projection/x-y
     plt.tight_layout()
 
 
-def plot_img_label_max_projection_xz(img, lbl, img_title="image (max projection/x-z)",
-                                     lbl_title="label (max projection)",
-                                     fig_width_px=1200, dpi=96, scale_z: int = 1):
+def plot_img_label_max_projection_xz(
+    img,
+    lbl,
+    img_title="image (max projection/x-z)",
+    lbl_title="label (max projection)",
+    fig_width_px=1200,
+    dpi=96,
+    scale_z: int = 1,
+):
     fig_width_in = fig_width_px / dpi  # convert to inches assuming 96 dpi
     fig_height_in = fig_width_in / 1.618  # set height to golden ratio
     # Create a new figure with the calculated size

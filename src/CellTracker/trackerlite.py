@@ -9,12 +9,15 @@ import numpy as np
 import scipy
 from matplotlib.patches import ConnectionPatch
 from numpy import ndarray
-from scipy.special import softmax
-from scipy.stats import trim_mean
 from scipy import ndimage
+from scipy.stats import trim_mean
 
-from CellTracker.coord_image_transformer import Coordinates, plot_prgls_prediction, plot_two_pointset_scatters
-from CellTracker.ffn import initial_matching_ffn, normalize_points, FFN
+from CellTracker.coord_image_transformer import (
+    Coordinates,
+    plot_prgls_prediction,
+    plot_two_pointset_scatters,
+)
+from CellTracker.ffn import FFN, initial_matching_ffn, normalize_points
 from CellTracker.stardistwrapper import load_2d_slices_at_time
 
 FIGURE = "figure"

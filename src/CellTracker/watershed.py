@@ -7,7 +7,7 @@ Author: Chentao Wen
 import numpy as np
 import skimage.morphology as morphology
 from numpy import ndarray
-from scipy.ndimage import filters, distance_transform_edt
+from scipy.ndimage import distance_transform_edt, filters
 from skimage.feature import peak_local_max
 from skimage.morphology import remove_small_objects
 from skimage.segmentation import find_boundaries, watershed

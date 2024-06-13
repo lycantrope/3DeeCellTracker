@@ -2,11 +2,11 @@
 This module provides tools for analyzing the activities from the tracked cells
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib as mpl
-from tifffile import imread
+import matplotlib.pyplot as plt
+import numpy as np
 import scipy
+from tifffile import imread
 
 mpl.rcParams["axes.spines.right"] = False
 mpl.rcParams["axes.spines.top"] = False
