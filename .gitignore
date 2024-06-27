@@ -22,3 +22,6 @@ eggs/
 .eggs/
 
 .DS_Store
+
+.ruff_cache
+.python-version
