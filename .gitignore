@@ -5,6 +5,12 @@ env/
 venv/
 #vscode
 .vscode
+#zed
+.zed
+
+#ruff_cache
+.ruff_cache
+
 # mypy
 .mypy_cache/
 .dmypy.json
