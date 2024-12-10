@@ -8,15 +8,20 @@ classifiers = [
     "Programming Language :: Python",
     "Environment :: GPU :: NVIDIA CUDA",
 ]
-dependencies = ["stardist>=0.9.1", "numpy>=1.26.4", "scikit-learn>=1.5.0"]
+dependencies = [
+    "stardist>=0.9.1",
+    "numpy>=1.26.4",
+    "scikit-learn>=1.5.0",
+    "matplotlib",
+]
 readme = "README.md"
-requires-python = ">= 3.8"
+requires-python = ">= 3.9"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.rye]
+[tool.uv]
 managed = true
 dev-dependencies = []
 
@@ -29,3 +34,7 @@ packages = ["src/CellTracker"]
 
 [tool.ruff.lint]
 extend-select = ["I"]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"

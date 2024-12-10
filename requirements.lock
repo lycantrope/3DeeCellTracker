@@ -27,7 +27,8 @@ lazy-loader==0.4
     # via scikit-image
 llvmlite==0.42.0
     # via numba
-matplotlib==3.9.0
+matplotlib==3.9.1
+    # via 3deecelltracker
     # via csbdeep
 networkx==3.3
     # via scikit-image
