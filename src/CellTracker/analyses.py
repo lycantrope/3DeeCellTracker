@@ -184,4 +184,3 @@ def draw_signals(signals, ylim_upper=None, ylim_lower=None, figsize=(20, 10)):
             if row<row_n-1:
                 axes[row, column].get_xaxis().set_visible(False)
     plt.subplots_adjust(left=0.02, bottom=0.02, right=0.98, top=0.98, wspace=0.2, hspace=0.2)
-
