@@ -8,23 +8,14 @@ classifiers = [
     "Programming Language :: Python",
     "Environment :: GPU :: NVIDIA CUDA",
 ]
-dependencies = [
-    "stardist>=0.9.1",
-    "numpy<2.0.0",
-    "scikit-learn>=1.5.0",
-    "matplotlib",
-    "setuptools>=75.6.0",
-]
+dependencies = ["stardist>=0.9.1", "numpy<2.0.0", "scikit-learn", "matplotlib"]
 readme = "README.md"
 requires-python = ">= 3.9"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "setuptools", "wheel"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-managed = true
-dev-dependencies = ["ipython>=8.18.1"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -39,3 +30,6 @@ extend-select = ["I"]
 [tool.pyright]
 venvPath = "."
 venv = ".venv"
+
+[dependency-groups]
+dev = ["ipykernel>=6.30.1"]
